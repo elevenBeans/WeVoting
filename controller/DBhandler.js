@@ -93,10 +93,10 @@ DBhander.insertPoll = function(obj, sucCal) {
   });
 };
 
-DBhander.queryPolls = function(ownerName, sucCal, errCal) { // 根据用户 name 查询 poll
+DBhander.queryPolls = function(ownerName, pageSize,pageNum,sucCal, errCal) { // 根据用户 name 查询 poll
   mongo.connect(dbUrl, function(err, db) {
     var pullList = db.collection('pollList');
-    pullList.find({ ownerName: ownerName }, { }).sort({ timestamp: -1 }).toArray(function(err, docs) {
+    pullList.find({ ownerName: ownerName }, { }).sort({ timestamp: -1 }).skip(pageSize*(pageNum-1)).limit(pageSize).toArray(function(err, docs) {
       if (err) {
         db.close();
         errCal(err);
