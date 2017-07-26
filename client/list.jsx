@@ -7,10 +7,12 @@ import Loading from './components/loading';
 
 import Footer from './components/footer';
 
-class List extends Component {
+import BottomLoader from './components/BottomLoader';
 
+class List extends Component {
 	constructor(props) {
     super(props);
+    this.props.params.pageNum=1;
     this.state = {
     	loadingPop: true,
     	pollList: []
@@ -18,24 +20,36 @@ class List extends Component {
   }
   componentDidMount() {
     $('#globalTransition').hide();
-  	if(this.props.params.name === userInfo.name){
-  		this.fetchPollList(this.props.params.name);
+    let name=this.props.params.name;
+    let pageNum=this.props.params.pageNum;
+  	if(name === userInfo.name){
+  		this.fetchPollList(name);
   	} else {
   		this.fetchPollList();
   	}
+    //处理滚动监听事件
+    const that=this;
+    const bl = new BottomLoader(this);
+    bl.addCallback(function(){ // debouce
+      pageNum++;
+      that.fetchPollList(name,pageNum);
+    },{
+      diff:300, // 触发距离（距离底部）
+      immediately:true
+    });
   }
-  fetchPollList(userName){
+  fetchPollList(userName,pageNum){
     $.ajax({
       type: "POST",
       url: '/api/getPollList',
       async: true,
       contentType: "application/json;charset=utf-8",
-      data: JSON.stringify({'userName': userName}),
+      data: JSON.stringify({'userName': userName, 'pageSize': 5, 'pageNum':pageNum }),
       dataType: 'json',
       success: function (data) {
         if(data && data.length !== 0) {
           this.setState({
-          	pollList: data,
+          	pollList: this.state.pollList.concat(data),
           	loadingPop: false
           });
         } else {
@@ -46,7 +60,6 @@ class List extends Component {
       }.bind(this)
   	});
   }
-
   render() {
     return (
 			<div className = "listpage">
