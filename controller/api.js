@@ -33,7 +33,7 @@ function filterOptions(dataArray) {
 
 router.post('/getPollList', function(req, resp) {
   if (req.body.userName) {
-    dbhandler.queryPolls(req.body.userName,
+    dbhandler.queryPolls(req.body.userName, req.body.pageSize, req.body.pageNum,
       function(data) {
         resp.send(filterOptions(data));
       },
@@ -41,7 +41,7 @@ router.post('/getPollList', function(req, resp) {
       }
     );
   } else { // 查询所有存在的 (不为空的)
-    dbhandler.queryPolls({ $exists: true },
+    dbhandler.queryPolls({ $exists: true }, req.body.pageSize, req.body.pageNum,
       function(data) {
         resp.send(filterOptions(data));
       },
