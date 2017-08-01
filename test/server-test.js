@@ -6,7 +6,7 @@ describe('ServerAPI', function() {
     describe('getPollList', function() {
         it('should return an Array', function(done) {
             request.post('/api/getPollList')
-            .send({})
+            .send({'pageSize': 5, 'pageNum':1 })
             .expect(200, function(err, response) {
                 should.not.exist(err);
                 should.exist(response);

@@ -63,7 +63,7 @@ describe('DBhandler operator', function() {
   describe('queryPolls', function() {
     it('should excute sucCal', function() {
       DBhandler.queryPolls(
-        'libin',
+        'libin', 5, 1,
         function(docs) {
           docs.should.be.Array();
         },
